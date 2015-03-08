@@ -2,7 +2,8 @@ var gulp = require("gulp"),
 	jade = require("gulp-jade"),
 	less = require("gulp-less"),
 	typescript = require("gulp-typescript"),
-	connect = require("gulp-connect");
+	connect = require("gulp-connect"),
+	concat = require("gulp-concat");
 
 
 var path = {
@@ -20,6 +21,14 @@ var path = {
 		jade: "./app/templates/**/*.jade",
 		less: "./app/public/styles/**/*.less",
 		typescript: "./app/public/scripts/**/*.ts"
+	},
+	copy: {
+		styles: "./app/public/styles/vendor/",
+		scripts: "./app/public/scripts/vendor/"
+	},
+	concat: {
+		styles: "./app/public/styles/**/*.css",
+		scripts: "./app/public/scripts/**/*.js"
 	}
 };
 
@@ -58,4 +67,13 @@ gulp.task("watch", function() {
 	gulp.watch(path.watch.typescript, ["typescript"])
 });
 
-gulp.task("default", ["jade","less","typescript","watch","server"]);
+gulp.task("concat", function() {
+	gulp.src(path.concat.styles)
+		.pipe(concat("styles.css"))
+		.pipe(gulp.dest(path.bin.css))
+	gulp.src(path.concat.scripts)
+		.pipe(concat("scripts.js"))
+		.pipe(gulp.dest(path.bin.js))
+});
+
+gulp.task("default", ["jade","less","typescript","concat","watch","server"]);
